@@ -1,0 +1,69 @@
+import tensorflow
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import math
+
+from keras.models import load_model
+import keras.backend as K
+from keras.layers import Dense, Dropout, LSTM,BatchNormalization, Activation,Conv1D,multiply,Flatten
+
+output_path = 'model/regression_model_v0.h5'
+sequence_length = 40
+test_data = pd.read_csv("input/TestingSet1.csv")
+#test_data = pd.read_csv("input/TestingSet2.csv")
+#test_data = pd.read_csv("input/TestingSet3.csv")
+
+n_bearing = test_data['id'].unique().max()
+
+feature_cols = ['f' + str(i) for i in range(1,63)]
+other_cols = ['time']
+
+
+seq_array_test_last = [test_data[test_data['id']==id][other_cols].values[-sequence_length:] 
+                       for id in range(1,n_bearing + 1) if len(test_data[test_data['id']==id]) >= sequence_length]
+
+seq_array_test_last = np.asarray(seq_array_test_last).astype(np.float32)
+
+print("This is the shape of the test set: {} bearings, {} cycles and {} features.".format(
+    seq_array_test_last.shape[0], seq_array_test_last.shape[1], seq_array_test_last.shape[2]))
+
+print("There is only {} bearings out of {} as {} bearings didn't have more than {} cycles.".format(
+    seq_array_test_last.shape[0], n_bearing, n_bearing - seq_array_test_last.shape[0], sequence_length))
+
+
+
+
+y_mask = [len(test_data[test_data['id']==id]) >= sequence_length for id in test_data['id'].unique()]
+
+label_array_test_last = test_data.groupby('id')['RUL'].nth(-1)[y_mask].values
+
+label_array_test_last = label_array_test_last.reshape(label_array_test_last.shape[0],1).astype(np.float32)
+
+def root_mean_squared_error(y_true, y_pred): 
+    return K.sqrt(K.mean(K.square(y_pred - y_true), axis=-1))
+
+# load the model
+if os.path.isfile(output_path):
+    estimator = load_model(output_path, custom_objects={'root_mean_squared_error': root_mean_squared_error,})
+
+    y_pred_test = estimator.predict(seq_array_test_last)
+    
+    y_true_test = label_array_test_last
+    
+    print(y_pred_test,y_true_test)
+
+    # test metrics
+    scores_test = estimator.evaluate(seq_array_test_last, label_array_test_last,verbose = 2)
+    print('\nMSE: {}'.format(scores_test[0]))
+
+
+    s1 = ((y_pred_test - y_true_test)**2).sum() #误差平方和
+    moy = y_pred_test.mean() # 预测值均值
+    s2 = ((y_pred_test - moy)**2).sum() # 预测值与预测均值的平方和
+    s = 1 - s1/s2
+    print('\nEfficiency: {}%'.format(s * 100))
+
+    test_set = pd.DataFrame(y_pred_test)
+    test_set.to_csv('output/submit_test.csv', index = None)
