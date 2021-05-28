@@ -3,16 +3,21 @@ import os
 import glob
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 from numpy.fft import fft, fftfreq
 
 bearings = ['Bearing1_1','Bearing1_2','Bearing1_3','Bearing1_4','Bearing1_5','Bearing1_6','Bearing1_7','Bearing2_1','Bearing2_2','Bearing2_3',
 'Bearing2_4','Bearing2_5','Bearing2_6','Bearing2_7','Bearing3_1','Bearing3_2','Bearing3_3']
 names = ['hour', 'minute', 'second', 'micro', 'haccel', 'vaccel']
 
+def get_rms(records):
+
+    return math.sqrt(sum([x ** 2 for x in records]) / len(records))
+
 for bearing in bearings:
     os.chdir('Data_set/' + bearing)
     i = 0
-    haccel_means, vaccel_means, haccel_maxs, vaccel_maxs, haccel_mins, vaccel_mins, haccel_p2ps, vaccel_p2ps, haccel_vars, vaccel_vars, haccel_kurts, vaccel_kurts, haccel_skews, vaccel_skews = [[] for _ in range(14)]
+    haccel_means, vaccel_means, haccel_maxs, vaccel_maxs, haccel_mins, vaccel_mins, haccel_p2ps, vaccel_p2ps, haccel_vars, vaccel_vars, haccel_kurts, vaccel_kurts, haccel_skews, vaccel_skews,haccel_rmss, vaccel_rmss = [[] for _ in range(16)]
     for fname in glob.glob('acc*.csv'):
         # if i % 10 != 0:
         #     i += 1
@@ -32,6 +37,8 @@ for bearing in bearings:
         vaccel_kurts.append(df['vaccel'].kurt())
         haccel_skews.append(df['haccel'].skew())
         vaccel_skews.append(df['vaccel'].skew())
+        haccel_rmss.append(get_rms(df['haccel']))
+        vaccel_rmss.append(get_rms(df['vaccel']))
         i += 1
 
     times = [10*_ for _ in range(len(haccel_means))]
@@ -50,7 +57,9 @@ for bearing in bearings:
                        'haccel_kurt': haccel_kurts,
                        'vaccel_kurt': vaccel_kurts,
                        'haccel_skew': haccel_skews,
-                       'vaccel_skew': vaccel_skews})
+                       'vaccel_skew': vaccel_skews,
+                       'haccel_rms': haccel_rmss,
+                       'vaccel_rms': vaccel_rmss,})
 
     os.chdir('../..')  # save csv to project directory
     df.to_csv('input/'+bearing + '_time_domain_features.csv',  encoding='utf-8',index = None)
