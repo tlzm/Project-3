@@ -44,6 +44,8 @@ for bearing in bearings:
 
 finalRUL = [0,0,573,290,161,146,757,0,0,753,139,309,129,58,0,0,82]
 
+
+
 for bearing in bearings:
     df = pd.read_csv('input/'+bearing + '_rawdata.csv')
     
@@ -56,16 +58,17 @@ for bearing in bearings:
                        'RUL': finalRUL[pos] + n_time - df['2']})
     
     # Set RUL label
-    df['RUL'] = np.where(df['RUL'] >= 800, 800, df['RUL'] )
+    df['RUL'] = np.where(df['RUL'] >= 801, 801, df['RUL'] )
     
+    df=df[~(df['RUL'].isin([801]))]
     # MinMax normalization (from 0 to 1)
-    cols_normalize = df.columns.difference(['RUL','id'])
-    scaler = MinMaxScaler()
+#    cols_normalize = df.columns.difference(['RUL','id'])
+#    scaler = MinMaxScaler()
     # scaler = MaxAbsScaler()
     # scaler = StandardScaler()
-    norm_data = pd.DataFrame(scaler.fit_transform(df[cols_normalize]),columns=cols_normalize, index=df.index)
-    join_data = df[df.columns.difference(cols_normalize)].join(norm_data)
-    df = join_data.reindex(columns = df.columns)
+#    norm_data = pd.DataFrame(scaler.fit_transform(df[cols_normalize]),columns=cols_normalize, index=df.index)
+#    join_data = df[df.columns.difference(cols_normalize)].join(norm_data)
+#    df = join_data.reindex(columns = df.columns)
     df.to_csv('input/'+bearing + '_rawdata_withlabel.csv',  encoding='utf-8',index = None)
 
 d11 = pd.read_csv('input/Bearing1_1_rawdata_withlabel.csv')
@@ -86,7 +89,8 @@ d31 = pd.read_csv('input/Bearing3_1_rawdata_withlabel.csv')
 d32 = pd.read_csv('input/Bearing3_2_rawdata_withlabel.csv')
 d33 = pd.read_csv('input/Bearing3_3_rawdata_withlabel.csv')
 
-d12 = pd.DataFrame({'id': d12['id']+2803,'haccel':d12['haccel'],'vaccel':d12['vaccel'],'RUL':d12['RUL']})
+
+""" d12 = pd.DataFrame({'id': d12['id']+2803,'haccel':d12['haccel'],'vaccel':d12['vaccel'],'RUL':d12['RUL']})
 d14 = pd.DataFrame({'id': d14['id']+1802,'haccel':d14['haccel'],'vaccel':d14['vaccel'],'RUL':d14['RUL']})
 d15 = pd.DataFrame({'id': d15['id']+2941,'haccel':d15['haccel'],'vaccel':d15['vaccel'],'RUL':d15['RUL']})
 d16 = pd.DataFrame({'id': d16['id']+5243,'haccel':d16['haccel'],'vaccel':d16['vaccel'],'RUL':d16['RUL']})
@@ -96,7 +100,24 @@ d24 = pd.DataFrame({'id': d24['id']+1202,'haccel':d24['haccel'],'vaccel':d24['va
 d25 = pd.DataFrame({'id': d25['id']+1814,'haccel':d25['haccel'],'vaccel':d25['vaccel'],'RUL':d25['RUL']})
 d26 = pd.DataFrame({'id': d26['id']+3816,'haccel':d26['haccel'],'vaccel':d26['vaccel'],'RUL':d26['RUL']})
 d27 = pd.DataFrame({'id': d27['id']+4388,'haccel':d27['haccel'],'vaccel':d27['vaccel'],'RUL':d27['RUL']})
+d32 = pd.DataFrame({'id': d32['id']+515,'haccel':d32['haccel'],'vaccel':d32['vaccel'],'RUL':d32['RUL']}) """
+
+d11 = pd.DataFrame({'id': d11['id']-2002,'haccel':d11['haccel'],'vaccel':d11['vaccel'],'RUL':d11['RUL']})
+d12 = pd.DataFrame({'id': d12['id']+730,'haccel':d12['haccel'],'vaccel':d12['vaccel'],'RUL':d12['RUL']})
+d13 = pd.DataFrame({'id': d13['id']-1574,'haccel':d13['haccel'],'vaccel':d13['vaccel'],'RUL':d13['RUL']})
+d14 = pd.DataFrame({'id': d14['id']-400,'haccel':d14['haccel'],'vaccel':d14['vaccel'],'RUL':d14['RUL']})
+d15 = pd.DataFrame({'id': d15['id']-923,'haccel':d15['haccel'],'vaccel':d15['vaccel'],'RUL':d15['RUL']})
+d16 = pd.DataFrame({'id': d16['id']-268,'haccel':d16['haccel'],'vaccel':d16['vaccel'],'RUL':d16['RUL']})
+d17 = pd.DataFrame({'id': d17['id']+576,'haccel':d17['haccel'],'vaccel':d17['vaccel'],'RUL':d17['RUL']})
+d22 = pd.DataFrame({'id': d22['id']+911,'haccel':d22['haccel'],'vaccel':d22['vaccel'],'RUL':d22['RUL']})
+d23 = pd.DataFrame({'id': d23['id']-202,'haccel':d23['haccel'],'vaccel':d23['vaccel'],'RUL':d23['RUL']})
+d24 = pd.DataFrame({'id': d24['id']+1000,'haccel':d24['haccel'],'vaccel':d24['vaccel'],'RUL':d24['RUL']})
+d25 = pd.DataFrame({'id': d25['id']+1612,'haccel':d25['haccel'],'vaccel':d25['vaccel'],'RUL':d25['RUL']})
+d26 = pd.DataFrame({'id': d26['id']+2612,'haccel':d26['haccel'],'vaccel':d26['vaccel'],'RUL':d26['RUL']})
+d27 = pd.DataFrame({'id': d27['id']+3184,'haccel':d27['haccel'],'vaccel':d27['vaccel'],'RUL':d27['RUL']})
 d32 = pd.DataFrame({'id': d32['id']+515,'haccel':d32['haccel'],'vaccel':d32['vaccel'],'RUL':d32['RUL']})
+
+
 
 #bearing No.
 d11['bearing']=1
