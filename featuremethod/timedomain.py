@@ -17,7 +17,7 @@ def get_rms(records):
 for bearing in bearings:
     os.chdir('Data_set/' + bearing)
     i = 0
-    haccel_means, vaccel_means, haccel_maxs, vaccel_maxs, haccel_mins, vaccel_mins, haccel_p2ps, vaccel_p2ps, haccel_vars, vaccel_vars, haccel_kurts, vaccel_kurts, haccel_skews, vaccel_skews,haccel_rmss, vaccel_rmss = [[] for _ in range(16)]
+    haccel_means, vaccel_means, haccel_maxs, vaccel_maxs, haccel_mins, vaccel_mins, haccel_p2ps, vaccel_p2ps, haccel_vars, vaccel_vars, haccel_kurts, vaccel_kurts, haccel_skews, vaccel_skews,haccel_rmss, vaccel_rmss = []
     for fname in glob.glob('acc*.csv'):
         # if i % 10 != 0:
         #     i += 1
