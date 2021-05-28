@@ -79,8 +79,11 @@ for bearing in learningbearings:
                        'f61': df_tfd['haccel_waveletcoeff3_skews'],
                        'f62': df_tfd['vaccel_waveletcoeff3_skews'],
 
+                       'f63': df_td['haccel_rms'],
+                       'f64': df_td['vaccel_rms'],
+
                        'RUL': (len(df_td)-1) - df_td['time']/10})
-    df['RUL'] = np.where(df['RUL'] >= 800, 800, df['RUL'] )
+#    df['RUL'] = np.where(df['RUL'] >= 1000, 1000, df['RUL'] )
     # MinMax normalization (from 0 to 1)
     cols_normalize = df.columns.difference(['RUL','time'])
     scaler = MinMaxScaler()
@@ -167,9 +170,12 @@ for bearing in testingbearings:
                        'f61': df_tfd['haccel_waveletcoeff3_skews'],
                        'f62': df_tfd['vaccel_waveletcoeff3_skews'],
 
+                       'f63': df_td['haccel_rms'],
+                       'f64': df_td['vaccel_rms'],
+
                        'RUL': finalRUL[pos]+(len(df_td)-1) - df_td['time']/10})
     # Set RUL label
-    df['RUL'] = np.where(df['RUL'] >= 800, 800, df['RUL'] )
+#    df['RUL'] = np.where(df['RUL'] >= 1000, 1000, df['RUL'] )
     # MinMax normalization (from 0 to 1)
     cols_normalize = df.columns.difference(['RUL','time'])
     scaler = MinMaxScaler()
