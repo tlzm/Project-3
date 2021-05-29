@@ -8,4 +8,6 @@ Furthermore, I have tried the follow methods:
 
 1. Predicting the RUL with only stastisics features (including time domain, freq. domain and wavelets feature). However, the results is quite worse.
 
-2. Predicting the RUL with raw data (setting the value of 0.1s as the value at that time)
+2. Predicting the RUL with raw data (setting the value of 0.1s as the value at that time).
+
+3. Predicting the RUL with time & freq. feature (STFT).
