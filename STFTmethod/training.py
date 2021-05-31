@@ -4,7 +4,7 @@ import keras
 import keras.backend as K
 from keras.layers.core import Activation
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, LSTM,Conv1D,Reshape,Flatten,BatchNormalization,Permute,TimeDistributed,Attention,SeparableConv1D,Lambda,RepeatVector,multiply,Multiply,LayerNormalization,Add
+from keras.layers import Dense, Dropout, LSTM,Conv1D,Reshape,Flatten,BatchNormalization,Permute,TimeDistributed,Attention,SeparableConv1D,Lambda,RepeatVector,multiply,Multiply,LayerNormalization,Add,Conv2D
 import csv
 import pandas as pd
 import numpy as np
@@ -37,11 +37,11 @@ def reshapeFeatures(id_df, seq_length, Feature):
         yield data_matrix[start:stop,:]
 
 # pick the feature columns 
-feature_col = ['haccel','vaccel']
+time_col = ['t' + str(i) for i in range(1,22)]
 #print(feature_col)
 
 # generator for the sequences
-fea_gen = (list(reshapeFeatures(train_data[train_data['id']==id], nb_freqs, feature_col)) for id in range(1, n_time + 1))
+fea_gen = (list(reshapeFeatures(train_data[train_data['id']==id], nb_freqs, time_col)) for id in range(1, n_time + 1))
 
 # generate sequences and convert to numpy array
 fea_array = np.concatenate(list(fea_gen)).astype(np.float32)
@@ -106,7 +106,7 @@ nb_times = fea_array.shape[2]
 nb_out = label_array.shape[1]
 
 x = keras.Input(shape=(nb_freqs,nb_times))
-x1=attention_3d_block(x,nb_times)
+x1=attention_3d_block(x,nb_freqs)
 
 x2=Permute((2,1))(x1)
 x3=Reshape((nb_times,nb_freqs,1))(x2)
@@ -122,7 +122,7 @@ x10=Permute((2,1))(x9)
 x11=keras.layers.Add()([x10,x])
 
 y1=Permute((2,1))(x)
-y2=attention_3d_block(y1,nb_freqs)
+y2=attention_3d_block(y1,nb_times)
 
 y3=Permute((2,1))(y2)
 y4=Reshape((nb_freqs,nb_times,1))(y3)
@@ -141,11 +141,9 @@ y=keras.layers.Concatenate(axis= 1)([x11,y11])
 attentionDTCN = keras.Model(x,y)
 
 
-
-
 model = Sequential()
 #model.add(Reshape((50,100),input_shape=(sequence_length, nb_features)))
-model.add(attentionTCN)
+model.add(attentionDTCN)
 #model.add(Permute((2,1)))
 #model.add(Reshape((2,2500,1)))
 #model.add(TimeDistributed(Conv1D(filters=64,kernel_size=5,strides=1,padding='causal',activation='swish')))
@@ -170,7 +168,7 @@ model.compile(loss='mse', optimizer='adam', metrics=[root_mean_squared_error,exp
 print(model.summary())
 
 epochs = 5000
-batch_size = 50
+batch_size = 200
 
 # fit the network
 history = model.fit(fea_array, label_array, epochs=epochs, batch_size=batch_size,shuffle=True, validation_split=0.1, verbose=1,
