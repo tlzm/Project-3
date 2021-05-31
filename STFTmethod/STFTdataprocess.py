@@ -12,14 +12,6 @@ bearings = ['Bearing1_1','Bearing1_2','Bearing1_3','Bearing1_4','Bearing1_5','Be
 'Bearing2_4','Bearing2_5','Bearing2_6','Bearing2_7','Bearing3_1','Bearing3_2','Bearing3_3']
 names = ['hour', 'minute', 'second', 'micro', 'haccel', 'vaccel']
 
-#t1,t2,t3,t4,t5,t6,t7 = [[] for _ in range(16)]
-
-for i in range(1,22):
-    locals()["t"+str(i)]=[]
-    
-times=[]
-#print(t21)
-position=[]
 
 finalRUL = [0,0,573,290,161,146,757,0,0,753,139,309,129,58,0,0,82]
 
@@ -27,7 +19,12 @@ for bearing in bearings:
     os.chdir('Data_set/' + bearing)
     pos = bearings.index(bearing)
     i = 0
-    haccel_means, vaccel_means, haccel_maxs, vaccel_maxs, haccel_mins, vaccel_mins, haccel_p2ps, vaccel_p2ps, haccel_vars, vaccel_vars, haccel_kurts, vaccel_kurts, haccel_skews, vaccel_skews,haccel_rmss, vaccel_rmss = [[] for _ in range(16)]
+    times=[]
+    position=[]
+    for j in range(1,22):
+        locals()["t"+str(j)]=[]
+
+   
     for fname in glob.glob('acc*.csv'):
         # if i % 10 != 0:
         #     i += 1
@@ -99,6 +96,7 @@ for bearing in bearings:
 
     os.chdir('../..')  # save csv to project directory
     df.to_csv('input/'+bearing + '_STFT.csv',  encoding='utf-8',index = None)
+    print(bearing+'_STFT.csv has saved.')
 
 
 d11 = pd.read_csv('input/Bearing1_1_STFT.csv')
@@ -118,6 +116,7 @@ d27 = pd.read_csv('input/Bearing2_7_STFT.csv')
 d31 = pd.read_csv('input/Bearing3_1_STFT.csv')
 d32 = pd.read_csv('input/Bearing3_2_STFT.csv')
 d33 = pd.read_csv('input/Bearing3_3_STFT.csv')
+
 
 d12['id']=d12['id']+2803
 d14['id']=d14['id']+1802
@@ -162,4 +161,4 @@ L2.to_csv('input/LearningSet2.csv',  encoding='utf-8',index = None)
 L3.to_csv('input/LearningSet3.csv',  encoding='utf-8',index = None)
 T1.to_csv('input/TestingSet1.csv',  encoding='utf-8',index = None)
 T2.to_csv('input/TestingSet2.csv',  encoding='utf-8',index = None)
-T3.to_csv('input/TestingSet3.csv',  encoding='utf-8',index = None)
+T3.to_csv('input/TestingSet3.csv',  encoding='utf-8',index = None) 
