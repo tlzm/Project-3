@@ -10,4 +10,6 @@ Furthermore, I have tried the follow methods:
 
 2. Predicting the RUL with raw data (setting the value of 0.1s as the value at that time).
 
-3. Predicting the RUL with time & freq. feature (STFT).
+3. Predicting the RUL with time & freq. feature (STFT). (Neural network and wavelets rebuild denoising were used, and the result is quite interesting). As a result, this method's result is almost the same as the raw data.
+
+4. Using the datasets (with rawdata method) to predict the continous learning, the results show life long learning is available for the real data.
