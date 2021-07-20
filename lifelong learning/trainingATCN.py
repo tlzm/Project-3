@@ -31,7 +31,7 @@ def reshapeFeatures(id_df, seq_length, Feature):
     we need to drop those which are below the window-length.
     """
     data_matrix = id_df[Feature].values
-    num_elements = data_matrix.shape[0] # 输出行数
+    num_elements = data_matrix.shape[0] 
     for start, stop in zip(range(0, num_elements-seq_length+1), range(seq_length, num_elements+1)):
         yield data_matrix[start:stop,:]
 
@@ -98,16 +98,16 @@ def attention_3d_block(inputs,TIME_STEPS):
 
 
 def ResBlock(x,filters,kernel_size,dilation_rate):
-    r=Conv1D(filters,kernel_size,padding='same',dilation_rate=dilation_rate,activation='relu')(x) #第一卷积
+    r=Conv1D(filters,kernel_size,padding='same',dilation_rate=dilation_rate,activation='relu')(x) 
     r=LayerNormalization()(r)
-    r=Conv1D(filters,kernel_size,padding='same',dilation_rate=dilation_rate)(r) #第二卷积
+    r=Conv1D(filters,kernel_size,padding='same',dilation_rate=dilation_rate)(r)
     r=LayerNormalization()(r)
     if x.shape[-1]==filters:
         shortcut=x
     else:
-        shortcut=Conv1D(filters,kernel_size,padding='same')(x)  #shortcut（捷径）
+        shortcut=Conv1D(filters,kernel_size,padding='same')(x) 
     o=add([r,shortcut])
-    o=Activation('relu')(o)  #激活函数
+    o=Activation('relu')(o)  
     return o
 
 
