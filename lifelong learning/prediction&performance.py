@@ -24,7 +24,7 @@ def reshapeFeatures(id_df, seq_length, Feature):
     we need to drop those which are below the window-length.
     """
     data_matrix = id_df[Feature].values
-    num_elements = data_matrix.shape[0] # 输出行数
+    num_elements = data_matrix.shape[0] 
     for start, stop in zip(range(0, num_elements-seq_length+1), range(seq_length, num_elements+1)):
         yield data_matrix[start:stop,:]
 
