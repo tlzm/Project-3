@@ -122,7 +122,7 @@ class SaveModel(tf.keras.callbacks.Callback):
 save_model = SaveModel()
 
 # fit the network
-history = model.fit(fea_array, label_array, epochs=epochs, batch_size=batch_size,validation_data=(feaval_array, labelval_array), verbose=1,
+history = model.fit(fea_array, label_array, epochs=epochs, batch_size=batch_size,shuffle=True, validation_split=0.2, verbose=1,
           callbacks = save_model
           )
 
