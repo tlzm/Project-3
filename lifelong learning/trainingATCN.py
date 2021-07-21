@@ -153,6 +153,7 @@ model.add(Dense(units=nb_out,activation='relu', name="dense_3"))
 if os.path.isfile(output_path):
 #    model.load_weights(output_path)
     model=load_model(output_path,custom_objects={'root_mean_squared_error':root_mean_squared_error,'exps':exps})
+    print('model loaded')
 optimizer =adam_v2.Adam(learning_rate=0.00001, beta_1=0.9, beta_2=0.999, epsilon=1e-07, amsgrad=False)
 model.compile(optimizer=optimizer,loss='mse', metrics=[root_mean_squared_error])
 
