@@ -3,7 +3,7 @@ from keras import optimizers
 import keras.backend as K
 from keras.layers.core import Activation
 from keras.models import Sequential
-from keras.layers import Dense,add, Dropout, LSTM,Conv1D,Reshape,Flatten,BatchNormalization,Permute,TimeDistributed,Attention,SeparableConv1D,Lambda,RepeatVector,multiply,Multiply,LayerNormalization,Add
+from keras.layers import Dense,add, Dropout,Conv1D,Reshape,Flatten,BatchNormalization,Permute,SeparableConv1D,Lambda,RepeatVector,multiply,Multiply,LayerNormalization,Add
 import csv
 import pandas as pd
 import numpy as np
@@ -15,7 +15,7 @@ from keras.optimizers import adam_v2
 
 input_path = 'model/generater_model_v0.h5'
 output_path = 'model/ATCN_regression_model_v0.h5'
-train_data = pd.read_csv('input/LearningSet2.csv')
+train_data = pd.read_csv('input/LearningSet1.csv')
 #train_data = pd.read_csv('input/LearningSet2.csv')
 #train_data = pd.read_csv('input/LearningSet3.csv')
 
@@ -98,15 +98,16 @@ def attention_3d_block(inputs,TIME_STEPS):
 
 
 def ResBlock(x,filters,kernel_size,dilation_rate):
-    r=Conv1D(filters,kernel_size,padding='same',dilation_rate=dilation_rate,activation='relu')(x) 
+    r=Conv1D(filters,kernel_size,padding='same',dilation_rate=dilation_rate,activation='swish')(x) 
     r=LayerNormalization()(r)
-    r=Conv1D(filters,kernel_size,padding='same',dilation_rate=dilation_rate)(r)
+    r=Conv1D(filters,kernel_size,padding='same',dilation_rate=dilation_rate,activation='swish')(r)
     r=LayerNormalization()(r)
     if x.shape[-1]==filters:
         shortcut=x
     else:
         shortcut=Conv1D(filters,kernel_size,padding='same')(x) 
     o=add([r,shortcut])
+#    o=LayerNormalization()(o)
     o=Activation('relu')(o)  
     return o
 
@@ -145,7 +146,7 @@ model.add(Flatten())
 #model.add(Dense(units=200, name="dense_0"))
 #model.add(Dropout(0.2, name="dropout_1"))
 model.add(Dense(units=200, name="dense_1"))
-model.add(Dropout(0.2, name="dropout_1"))
+model.add(Dropout(0.2, name="dropout_1")) 
 model.add(Dense(units=10, name="dense_2"))
 model.add(Dropout(0.2, name="dropout_3"))
 model.add(Dense(units=nb_out,activation='relu', name="dense_3"))
@@ -160,7 +161,7 @@ model.compile(optimizer=optimizer,loss='mse', metrics=[root_mean_squared_error])
 print(model.summary())
 
 epochs = 500
-batch_size = 64                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+batch_size = 256                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 
 class SaveModel(tf.keras.callbacks.Callback):
     def on_train_begin(self, logs=None):
@@ -168,8 +169,8 @@ class SaveModel(tf.keras.callbacks.Callback):
         self.loss =[]
         self.D_loss =[]
     def on_epoch_end(self, epoch, logs=None):
-        current_D_loss = logs.get("val_root_mean_squared_error") + logs.get("root_mean_squared_error") 
-        self.D_loss.append(logs.get("val_root_mean_squared_error")+logs.get("root_mean_squared_error"))
+        current_D_loss = logs.get("val_root_mean_squared_error")/2 + logs.get("root_mean_squared_error") 
+        self.D_loss.append(logs.get("val_root_mean_squared_error")/2+logs.get("root_mean_squared_error"))
         if current_D_loss <= min(self.D_loss):
             print('Find lowest val_loss. Saving entire model.')
             model.save(output_path) # < ----- Here 
