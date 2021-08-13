@@ -146,8 +146,8 @@ model.compile(optimizer=optimizer,loss='mse', metrics=[root_mean_squared_error])
 
 print(model.summary())
 
-epochs = 500
-batch_size = 128                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+epochs = 400
+batch_size = 256                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 
 class SaveModel(tf.keras.callbacks.Callback):
     def on_train_begin(self, logs=None):
