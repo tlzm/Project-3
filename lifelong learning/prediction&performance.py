@@ -16,7 +16,7 @@ sequence_length=2511
 
 """ output_path = 'model/RCNN_regression_model_v0.h5'
 
-sequence_length=2556 """
+sequence_length=2541 """
 
 
 def reshapeFeatures(id_df, seq_length, Feature):
