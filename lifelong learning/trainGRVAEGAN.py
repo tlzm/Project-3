@@ -369,7 +369,7 @@ GAN.compile(loss='mse', optimizer=opt)
 
 
 batch_size=512
-epochs=5000
+epochs=6000
 
 valid = np.ones((batch_size, 1))
 fake = np.zeros((batch_size, 1))
